@@ -16,6 +16,7 @@ create table if not exists follwing(
     user_mid integer,
     constraint fk foreign key (user_mid) references user(mid),
     follwing_mid integer,
+    constraint fk2 foreign key (follwing_mid) references user(mid),
     constraint uq unique (user_mid,follwing_mid)
 );
 create table if not exists videos(
