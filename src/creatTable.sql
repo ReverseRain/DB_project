@@ -12,7 +12,7 @@ create table if not exists user(
     identity varchar(9)
 );
 create table if not exists follwing(
-    id integer primary key ,
+    id serial primary key ,
     user_mid integer,
     constraint fk foreign key (user_mid) references user(mid),
     follwing_mid integer,
@@ -37,19 +37,19 @@ create table if not exists videos(
 );
 -- 点赞，投币和收藏是否可以多次？
 create table if not exists like(
-    id integer primary key ,
+    id serial primary key ,
     BV varchar(30),
     constraint fk foreign key (BV) references videos(BV),
     user_mid integer unique
 );
 create table if not exists coin(
-    id integer primary key ,
+    id serial primary key ,
     BV varchar(30),
     constraint fk foreign key (BV) references videos(BV),
     user_mid integer unique
 );
 create table if not exists favorite(
-    id integer primary key ,
+    id serial primary key ,
     BV varchar(30),
     constraint fk foreign key (BV) references videos(BV),
     user_mid integer unique
@@ -57,7 +57,7 @@ create table if not exists favorite(
 -- view：包含观看此视频的用户及其上次观看的时长的列表。
 -- 这是什么鬼
 create table if not exists danmu(
-    id integer primary key ,
+    id serial primary key ,
     BV varchar(10),
     constraint fk1 foreign key (BV) references videos(BV),
     mid integer,
@@ -67,7 +67,7 @@ create table if not exists danmu(
 );
 -- question 这里要不要设置两个外键？
 create table if not exists view(
-    id integer primary key ,
+    id serial primary key ,
     BV varchar(10),
     constraint fk foreign key (BV)references videos(BV),
     mid integer,
