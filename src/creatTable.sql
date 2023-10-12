@@ -8,7 +8,7 @@ create table if not exists user(
     level integer,
     sign varchar(80),
 --     follwing 当中是不可以有多个mid值的，否则将影响第一范式
--- identity 尚不清楚数据是啥样，先空着
+-- identity 尚不清楚数据是啥样，先空着dsjfsndjfnskdfsdfs
     identity varchar(9)
 );
 create table if not exists follwing(
