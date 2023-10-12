@@ -1,5 +1,5 @@
-create table if not exists user(
-    mid integer primary key unique ,
+create table if not exists user_(
+    mid integer primary key  ,
 --     name 用户名是否可以重复？
     name varchar(20) not null ,
     sex varchar(2),
@@ -8,24 +8,24 @@ create table if not exists user(
     level integer,
     sign varchar(80),
 --     follwing 当中是不可以有多个mid值的，否则将影响第一范式
--- identity 尚不清楚数据是啥样，先空着dsjfsndjfnskdfsdfs
-    identity varchar(9)
+-- identity 尚不清楚数据是啥样，先空着
+    identity varchar(9) not null
 );
-create table if not exists follwing(
+create table if not exists following(
     id serial primary key ,
     user_mid integer,
-    constraint fk foreign key (user_mid) references user(mid),
-    follwing_mid integer,
-    constraint fk2 foreign key (follwing_mid) references user(mid),
-    constraint uq unique (user_mid,follwing_mid)
+    constraint fk1 foreign key (user_mid) references user_(mid),
+    following_mid integer,
+--     constraint fk2 foreign key (following_mid)references user_(mid)
+    constraint uq unique (user_mid,following_mid)
 );
 create table if not exists videos(
-    BV varchar(30) primary key unique ,
+    BV varchar(30) primary key  ,
     title varchar(30),
 --     owner mid 视频所有者是只能有一个人吗？
     owner_mid integer ,
-    constraint fk foreign key (owner_mid) references user(mid),
-    commite_time varchar(25),
+    constraint fk foreign key (owner_mid) references user_(mid),
+    commit_time varchar(25),
     review_time varchar(25),
     public_time varchar(25),
     duration integer,
@@ -37,23 +37,26 @@ create table if not exists videos(
 -- 这是什么鬼
 );
 -- 点赞，投币和收藏是否可以多次？
-create table if not exists like(
+create table if not exists like_(
     id serial primary key ,
     BV varchar(30),
-    constraint fk foreign key (BV) references videos(BV),
-    user_mid integer unique
+    constraint fk1 foreign key (BV) references videos(BV),
+    user_mid integer unique,
+    constraint fk2 foreign key (user_mid) references user_(mid)
 );
 create table if not exists coin(
     id serial primary key ,
     BV varchar(30),
-    constraint fk foreign key (BV) references videos(BV),
-    user_mid integer unique
+    constraint fk1 foreign key (BV) references videos(BV),
+    user_mid integer unique,
+    constraint fk2 foreign key (user_mid) references user_(mid)
 );
 create table if not exists favorite(
     id serial primary key ,
     BV varchar(30),
     constraint fk foreign key (BV) references videos(BV),
-    user_mid integer unique
+    user_mid integer unique,
+    constraint fk2 foreign key (user_mid) references user_(mid)
 );
 -- view：包含观看此视频的用户及其上次观看的时长的列表。
 -- 这是什么鬼
@@ -62,7 +65,7 @@ create table if not exists danmu(
     BV varchar(10),
     constraint fk1 foreign key (BV) references videos(BV),
     mid integer,
-    constraint fk2 foreign key (mid) references user(mid),
+    constraint fk2 foreign key (mid) references user_(mid),
     time integer,
     content varchar(50)
 );
@@ -70,7 +73,8 @@ create table if not exists danmu(
 create table if not exists view(
     id serial primary key ,
     BV varchar(10),
-    constraint fk foreign key (BV)references videos(BV),
+    constraint fk1 foreign key (BV)references videos(BV),
     mid integer,
+    constraint fk2 foreign key (mid) references user_(mid),
     timeLong integer
 );
