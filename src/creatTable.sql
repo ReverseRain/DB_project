@@ -13,14 +13,15 @@ create table if not exists following(
     id serial primary key ,
     user_mid integer,
     constraint fk1 foreign key (user_mid) references user_(mid)
-        on UPDATE cascade 
+        on UPDATE cascade
         on DELETE cascade ,
-    following_mid integer,         
+    following_mid integer,
     constraint fk2 foreign key (following_mid)references user_(mid)
-        on UPDATE cascade 
+        on UPDATE cascade
         on DELETE cascade ,
     constraint uq unique (user_mid,following_mid)
 );
+
 create table if not exists videos(
     BV varchar(30) primary key,
     title varchar(30),
@@ -40,38 +41,38 @@ create table if not exists videos(
 create table if not exists like_(
     id serial primary key ,
     BV varchar(30),
-    constraint fk1 foreign key (BV) references videos(BV)
-        on DELETE cascade 
-        on UPDATE cascade ,
     user_mid integer ,
-    constraint fk2 foreign key (user_mid) references user_(mid)
-        on DELETE cascade 
+    constraint fk1 foreign key (BV) references videos(BV)
+        on DELETE cascade
         on UPDATE cascade ,
-        constraint uq unique (BV,user_mid)                        
+    constraint fk2 foreign key (user_mid) references user_(mid)
+        on DELETE cascade
+        on UPDATE cascade ,
+        constraint uq1 unique (BV,user_mid)
 );
 create table if not exists coin(
     id serial primary key ,
     BV varchar(30),
-    constraint fk1 foreign key (BV) references videos(BV)
-        on DELETE cascade 
-        on UPDATE cascade ,
     user_mid integer ,
+    constraint fk1 foreign key (BV) references videos(BV)
+        on DELETE cascade
+        on UPDATE cascade ,
     constraint fk2 foreign key (user_mid) references user_(mid)
-        on DELETE cascade 
+        on DELETE cascade
         on UPDATE cascade,
-        constraint uq unique (BV,user_mid)                        
+        constraint uq2 unique (BV,user_mid)
 );
 create table if not exists favorite(
     id serial primary key ,
     BV varchar(30),
-    constraint fk1 foreign key (BV) references videos(BV)
-        on DELETE cascade 
-        on UPDATE cascade ,
     user_mid integer ,
+    constraint fk1 foreign key (BV) references videos(BV)
+        on DELETE cascade
+        on UPDATE cascade ,
     constraint fk2 foreign key (user_mid) references user_(mid)
-        on DELETE cascade 
+        on DELETE cascade
         on UPDATE cascade,
-        constraint uq unique (BV,user_mid)                            
+        constraint uq3 unique (BV,user_mid)
 );
 create table if not exists view_time(
     id serial primary key ,
@@ -79,13 +80,13 @@ create table if not exists view_time(
     user_mid integer,
     watch_time integer,
     constraint fk1 foreign key (BV) references videos(BV)
-         on UPDATE cascade 
+         on UPDATE cascade
          on DELETE cascade ,
     constraint fk2 foreign key (user_mid) references user_(mid)
-        on UPDATE cascade 
+        on UPDATE cascade
         on DELETE cascade ,
-        constraint uq unique (BV,user_mid) 
-                                    
+        constraint uq4 unique (BV,user_mid)
+
 );
 --投币点赞收藏，同一个视频同一个人只能进行一次，（bv,id）唯一
 --on UPDATE cascade on DELETE cascade ,作用：
@@ -93,9 +94,9 @@ create table if not exists view_time(
 create table if not exists danmu(
     id serial primary key ,
     BV varchar(10),
-    constraint fk1 foreign key (BV) references videos(BV),
     mid integer,
-    constraint fk2 foreign key (mid) references user_(mid),
     time integer,
-    content varchar(50)
+    content varchar(50),
+    constraint fk1 foreign key (BV) references videos(BV),
+    constraint fk2 foreign key (mid) references user_(mid)
 );
