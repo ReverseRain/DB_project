@@ -15,7 +15,7 @@ create table if not exists following(
     constraint fk1 foreign key (user_mid) references user_(mid)
         on UPDATE cascade
         on DELETE cascade ,
-    following_mid integer,
+    following_mid varchar(30),
     constraint fk2 foreign key (following_mid)references user_(mid)
         on UPDATE cascade
         on DELETE cascade ,
