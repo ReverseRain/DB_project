@@ -96,7 +96,7 @@ create table if not exists danmu(
     BV varchar(100),
     mid varchar(100),
     time varchar(100),
-    content varchar(1000)
+    content varchar(1000)，
     constraint fk1 foreign key (BV) references videos(BV),
     constraint fk2 foreign key (mid) references user_(mid)
 );
