@@ -1,5 +1,5 @@
 create table if not exists user_(
-    mid integer primary key  ,
+    mid varchar(30) primary key  ,
 --     name 用户名是否可以重复？
 --可以吧
     name varchar(20) not null ,
@@ -11,7 +11,7 @@ create table if not exists user_(
 );
 create table if not exists following(
     id serial primary key ,
-    user_mid integer,
+    user_mid varchar(30),
     constraint fk1 foreign key (user_mid) references user_(mid)
         on UPDATE cascade
         on DELETE cascade ,
@@ -27,21 +27,21 @@ create table if not exists videos(
     title varchar(30),
 --     owner mid 视频所有者是只能有一个人吗？
 --不知
-    owner_mid integer ,
+    owner_mid varchar(30) ,
     constraint fk1 foreign key (owner_mid) references user_(mid),
     commit_time varchar(25),
     review_time varchar(25),
     public_time varchar(25),
     duration integer,
     description varchar(80),
-    reviewer integer,
+    reviewer varchar(30),
     constraint fk2 foreign key (reviewer) references user_(mid)
 );
 
 create table if not exists like_(
     id serial primary key ,
     BV varchar(30),
-    user_mid integer ,
+    user_mid varchar(30) ,
     constraint fk1 foreign key (BV) references videos(BV)
         on DELETE cascade
         on UPDATE cascade ,
@@ -53,7 +53,7 @@ create table if not exists like_(
 create table if not exists coin(
     id serial primary key ,
     BV varchar(30),
-    user_mid integer ,
+    user_mid varchar(30) ,
     constraint fk1 foreign key (BV) references videos(BV)
         on DELETE cascade
         on UPDATE cascade ,
@@ -65,7 +65,7 @@ create table if not exists coin(
 create table if not exists favorite(
     id serial primary key ,
     BV varchar(30),
-    user_mid integer ,
+    user_mid varchar(30) ,
     constraint fk1 foreign key (BV) references videos(BV)
         on DELETE cascade
         on UPDATE cascade ,
@@ -77,7 +77,7 @@ create table if not exists favorite(
 create table if not exists view_time(
     id serial primary key ,
     BV varchar(10),
-    user_mid integer,
+    user_mid varchar(30),
     watch_time integer,
     constraint fk1 foreign key (BV) references videos(BV)
          on UPDATE cascade
@@ -94,7 +94,7 @@ create table if not exists view_time(
 create table if not exists danmu(
     id serial primary key ,
     BV varchar(10),
-    mid integer,
+    mid varchar(30),
     time integer,
     content varchar(50),
     constraint fk1 foreign key (BV) references videos(BV),
