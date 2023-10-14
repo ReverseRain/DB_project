@@ -93,10 +93,10 @@ create table if not exists view_time(
 --父表数据更新删除时，子表相应数据也会更新删除
 create table if not exists danmu(
     id serial primary key ,
-    BV varchar(10),
-    mid varchar(30),
-    time integer,
-    content varchar(50),
+    BV varchar(100),
+    mid varchar(100),
+    time varchar(100),
+    content varchar(1000)
     constraint fk1 foreign key (BV) references videos(BV),
     constraint fk2 foreign key (mid) references user_(mid)
 );
