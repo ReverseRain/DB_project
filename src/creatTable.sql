@@ -4,10 +4,10 @@ create table if not exists user_(
 --可以吧
     name varchar(20) not null ,
     sex varchar(2),
-    birthday varchar(6),
+    birthday varchar(10),
     level integer,
     sign varchar(80),
-    identity varchar(9) not null
+    identity varchar(10) not null
 );
 create table if not exists following(
     id serial primary key ,
