@@ -1,42 +1,107 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 
 public class tryRead {
 
     private static PreparedStatement stmt = null;
+    private static PreparedStatement stmt2 = null;
     private static Connection connection = null;
     public static void main(String[] args) throws IOException {
-        BufferedReader reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\danmu.csv"));
-        String line;
         if (getConnection("localhost","5432","postgres",
                 "postgres","4165202Lyf")){
+            BufferedReader reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\users.csv"));
+            String line= reader.readLine();String ans="";long num=0;int start=0;
             try {
-                stmt=connection.prepareStatement("insert into video_1(BV,mid,time,content)"+"values(?,?,?,?)");
+                stmt=connection.prepareStatement("insert into user_(mid,name,sex,birthday,level,sign,identity)"+"values(?,?,?,?,?,?,?)");
+                stmt2=connection.prepareStatement("insert into following(user_mid,following_mid)"+"values(?,?)");
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            while ((line = reader.readLine())!=null){
-                String[] inform=line.split(",");
-                if (inform.length==4){
-                try {
-                    loadData(inform[0],inform[1],inform[2],inform[3]);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println(line);}
+//            while ((line = reader.readLine())!=null){
+//                if (line.endsWith("user")){
+//                ans=ans+line;
+//                String[] UserInform=ans.split(",");
+//                    try {
+//                        for (int i = 6; i <UserInform.length-1 ; i++) {
+//                            if (UserInform[i].equals("[]")||UserInform[i].startsWith("\"[")||UserInform[i].endsWith("']")){
+//                                start=i;
+//                                break;
+//                            }
+//                            UserInform[5]=UserInform[5]+","+UserInform[i];
+//                        }
+//                        loadDataUser(UserInform[0],UserInform[1], UserInform[2],UserInform[3],UserInform[4],UserInform[5],UserInform[UserInform.length-1]);
+//                        for (int i = start; i < UserInform.length-1 ; i++) {
+//                            if (UserInform[i].equals("[]")){
+//                                break;
+//                            }
+//                            if (i==start&&i+1==UserInform.length-1){
+//                                UserInform[i]=UserInform[i].replace("[","");
+//                                UserInform[i]=UserInform[i].replace("]","");
+//                            }
+//                            else if (i==start){
+//                                UserInform[i]=UserInform[i].replace("\"[","");
+//                            }
+//                            else if (i+1==UserInform.length-1){
+//                                UserInform[i]=UserInform[i].replace("]\"","");
+//                            }
+//                            UserInform[i]=UserInform[i].replace(" '","");
+//                            UserInform[i]=UserInform[i].replace("'","");
+//                            loadDataFollowing(UserInform[0],UserInform[i] );
+//                        }
+//                    } catch (SQLException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    System.out.println(ans);
+//                    ans="";
+//                    num++;}else {
+//                    ans=ans+line+"\n";
+//                }
+//            }
+//            System.out.println("finish");
+//            try {
+//                stmt.executeBatch();
+//                stmt.clearBatch();
+//                stmt2.executeBatch();
+//                stmt2.clearBatch();
+//
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            System.out.println(num);
+//            System.out.println("final of users");
+
+
+            reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\danmu.csv"));
+            line= reader.readLine();
+            num=0;
+            try {
+                stmt=connection.prepareStatement("insert into danmu(BV,mid,time,content)"+"values(?,?,?,?)");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            System.out.println("finish");
+            String[] inform=reader.readLine().split(",");
+            while ((line = reader.readLine())!=null){
+                if (line.startsWith("BV")){
+                    System.out.println(line);
+                    try {
+                        loadDataDanmu(inform[0],inform[1],inform[2],inform[3]);
+                        num++;
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    inform=line.split(",");
+                }else inform[3]=inform[3]+"\n"+line;
+            }
+            System.out.println("finishII");
             try {
                 stmt.executeBatch();
                 stmt.clearBatch();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("final");
-        };
+            System.out.println("final of danmu");
+        }
     }
 
     private static boolean getConnection(String host,String port,String dbname,String user,String pwd) {
@@ -84,13 +149,32 @@ public class tryRead {
             stmt.addBatch();
         }
     }
-    private static void loadData(String BV,String mid,String time,String content) throws SQLException {
+    private static void loadDataDanmu(String BV,String mid,String time,String content) throws SQLException {
         if (connection != null) {
             stmt.setString(1, BV);
             stmt.setString(2, mid);
             stmt.setString(3, time);
             stmt.setString(4, content);
             stmt.addBatch();
+        }
+    }
+    private static void loadDataUser(String mid,String name,String sex,String birthday,String level,String sign,String identity) throws SQLException {
+        if (connection != null) {
+            stmt.setString(1, mid);
+            stmt.setString(2,name);
+            stmt.setString(3, sex);
+            stmt.setString(4,birthday);
+            stmt.setString(5,level);
+            stmt.setString(6,sign);
+            stmt.setString(7,identity);
+            stmt.addBatch();
+        }
+    }
+    private static void loadDataFollowing(String mid,String following_mid) throws SQLException {
+        if (connection != null) {
+            stmt2.setString(1, mid);
+            stmt2.setString(2,following_mid);
+            stmt2.addBatch();
         }
     }
 }
