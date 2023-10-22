@@ -10,7 +10,7 @@ public class tryRead {
         if (getConnection("localhost","5432","postgres",
                 "postgres","4165202Lyf")){
             BufferedReader reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\users.csv"));
-            String line= reader.readLine();String ans="";long num=0;int start=0;
+//            String ans="";long num=0;int start=0;
             try {
                 stmt=connection.prepareStatement("insert into user_(mid,name,sex,birthday,level,sign,identity)"+"values(?,?,?,?,?,?,?)");
                 stmt2=connection.prepareStatement("insert into following(user_mid,following_mid)"+"values(?,?)");
@@ -72,35 +72,98 @@ public class tryRead {
 //            System.out.println("final of users");
 
 
-            reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\danmu.csv"));
-            line= reader.readLine();
-            num=0;
-            try {
-                stmt=connection.prepareStatement("insert into danmu(BV,mid,time,content)"+"values(?,?,?,?)");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            String[] inform=reader.readLine().split(",");
-            while ((line = reader.readLine())!=null){
-                if (line.startsWith("BV")){
-                    System.out.println(line);
+//            reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\danmu.csv"));
+            String line= reader.readLine();Boolean haveComplete=true,isFirst=false;
+            long num=0;String[] inform,following,note;String temp="";
+//            try {
+//                stmt=connection.prepareStatement("insert into danmu(BV,mid,time,content)"+"values(?,?,?,?)");
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            String[] inform=reader.readLine().split(",");
+//            while ((line = reader.readLine())!=null){
+//                if (line.startsWith("BV")){
+//                    System.out.println(line);
+//                    for (int i = 4; i <inform.length ; i++) {
+//                        inform[3]=inform[3]+inform[i];
+//                    }
+//                    if (inform.length>=4){try {
+//                        loadDataDanmu(inform[0],inform[1],inform[2],inform[3]);
+//                        num++;
+//                    } catch (SQLException e) {
+//                        throw new RuntimeException(e);
+//                    }}else {
+//                        try {
+//                            loadDataDanmu(inform[0],inform[1],inform[2],"廖宇");
+//                            num++;
+//                        } catch (SQLException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                    inform=line.split(",");
+//                }else inform[3]=inform[3]+"\n"+line;
+//            }
+//            try {
+//                loadDataDanmu(inform[0],inform[1],inform[2],inform[3]);
+//                num++;
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+
+
+
+            while ((line= reader.readLine())!=null){
+                note=line.split("\"");
+//                System.out.println(line);
+                System.out.println(note.length);
+                if (note.length%2!=1){
+                    if (haveComplete){
+                        haveComplete=false;
+                        temp=temp+line;
+                    }else {
+                        temp=temp+"\n"+line;
+                        haveComplete=true;
+                    }
+                }
+                if (temp.equals("")){
+                    inform=line.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",-1 );
+                }else {
+                inform=temp.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",-1 );}
+
+                if (haveComplete&inform.length==8){
                     try {
-                        loadDataDanmu(inform[0],inform[1],inform[2],inform[3]);
+                        System.out.println(inform[0]+" "+inform[1]+" "+inform[2]+" "+inform[3]+" "+inform[4]+" "+inform[5]+" "+inform[7]+" "+num);
+                        inform[5]=inform[5].replace("\"","");
+                        inform[6]=inform[6].replace("\"","");
+                        following=inform[6].split(",");
+                        loadDataUser(inform[0],inform[1],inform[2],inform[3],inform[4],inform[5],inform[7]);
                         num++;
+//                        for (int i = 0; i < following.length; i++) {
+//                            loadDataFollowing(inform[0],following[i]);
+//                        }
+                        temp="";
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    inform=line.split(",");
-                }else inform[3]=inform[3]+"\n"+line;
-            }
+                }
+            }//没有一种方法可以计算字符串中相应子串的个数？
+
             System.out.println("finishII");
             try {
                 stmt.executeBatch();
                 stmt.clearBatch();
+                stmt2.executeBatch();
+                stmt2.clearBatch();
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("final of danmu");
+            System.out.println("final of user");
+
+//            reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\users.csv"))
+
+
+
         }
     }
 
@@ -133,9 +196,9 @@ public class tryRead {
         }
     }
 
-    private static void loadData(String BV, String title, Integer owner_mid,
+    private static void loadDataVideo(String BV, String title, Integer owner_mid,
                                  Date commit_time,Date review_time,Date public_time,
-                                 Integer duration,String description,Integer reviewer) throws SQLException {
+                                 Integer duration,String description,Integer reviewer_mid) throws SQLException {
         if (connection != null) {
             stmt.setString(1, BV);
             stmt.setString(2, title);
@@ -145,7 +208,7 @@ public class tryRead {
             stmt.setDate(6, public_time);
             stmt.setInt(7, duration);
             stmt.setString(8, description);
-            stmt.setInt(9, reviewer);
+            stmt.setInt(9, reviewer_mid);
             stmt.addBatch();
         }
     }
