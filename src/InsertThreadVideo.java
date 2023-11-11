@@ -1,32 +1,40 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class InsertThreadVideo implements Runnable {
     private Connection connection;
-
-    public InsertThreadVideo(Connection connection, PreparedStatement stmt, PreparedStatement stmtLike,
-                             PreparedStatement stmtCoin, PreparedStatement stmtFar,
-                             PreparedStatement stmtView, List<String[]> dataList) {
-        this.connection = connection;
-        this.stmt = stmt;
-        this.stmtLike = stmtLike;
-        this.stmtCoin = stmtCoin;
-        this.stmtFar = stmtFar;
-        this.stmtView = stmtView;
-        this.dataList = dataList;
-    }
-
     private PreparedStatement stmt, stmtLike, stmtCoin, stmtFar, stmtView;
     private List<String[]> dataList;
+    private long start;
+    public InsertThreadVideo(Connection connection,List<String[]> dataList,long start) {
+        this.connection = connection;
+        try {
+            stmt = connection.prepareStatement("insert into videos(BV,title,owner_mid,owner_name,commit_time,review_time,public_time,duration,description,reviewer)" + "values(?,?,?,?,?,?,?,?,?,?)");
+//                stmt=connection.prepareStatement("insert into user_(mid,name,sex,birthday,level,sign,identity)"+"values(?,?,?,?,?,?,?)");
+//                stmt2=connection.prepareStatement("insert into following(user_mid,following_mid)"+"values(?,?)");
+            stmtLike = connection.prepareStatement("insert into like_(BV,user_mid)" + "values(?,?)");
+            stmtCoin = connection.prepareStatement("insert into coin(BV,user_mid)" + "values(?,?)");
+            stmtFar = connection.prepareStatement("insert into favorite(BV,user_mid)" + "values(?,?)");
+            stmtView = connection.prepareStatement("insert into view_time(BV,user_mid,watch_time)" + "values(?,?,?)");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        this.dataList = dataList;
+        this.start=start;
+    }
+
+
 
     @Override
     public void run() {
         String[] lineList;
+        long num = 0;
         for (int j = 0; j < dataList.size(); j++) {
             lineList = dataList.get(j);
-            long num = 0;
             try {
                 loadDataVideo(lineList[0], lineList[1], lineList[2], lineList[3], lineList[4], lineList[5], lineList[6], lineList[7], lineList[8], lineList[9]);
                 lineList[10] = changeFollowing(lineList[10]);
@@ -49,17 +57,18 @@ public class InsertThreadVideo implements Runnable {
                 lineList[13] = changeView(lineList[13]);
                 String[] view = lineList[13].split(",");
                 for (int i = 0; i < view.length; i++) {
-                    loadDataView(lineList[0], view[i], view[++i]);
+                    if(i+1< view.length){
+                    loadDataView(lineList[0], view[i], view[++i]);}
                 }
                 num++;
-                if (num % 300 == 0) {
+                if (num %30 == 0) {
                     try {
                         stmt.executeBatch();
                         stmt.clearBatch();
-                        stmtCoin.executeBatch();
-                        stmtCoin.clearBatch();
                         stmtLike.executeBatch();
                         stmtLike.clearBatch();
+                        stmtCoin.executeBatch();
+                        stmtCoin.clearBatch();
                         stmtFar.executeBatch();
                         stmtFar.clearBatch();
                         stmtView.executeBatch();
@@ -68,8 +77,7 @@ public class InsertThreadVideo implements Runnable {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println(num);
-
+//                System.out.println(num+"视频");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -86,10 +94,13 @@ public class InsertThreadVideo implements Runnable {
             stmtFar.clearBatch();
             stmtView.executeBatch();
             stmtView.clearBatch();
+            mycommit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         System.out.println("finish");
+        long cur=System.currentTimeMillis()-start;
+        System.out.println("时间"+cur);
     }
 
     private void loadDataCoin(String BV, String user_mid) throws SQLException {
@@ -133,10 +144,10 @@ public class InsertThreadVideo implements Runnable {
             stmt.setString(2, title);
             stmt.setString(3, owner_mid);
             stmt.setString(4, owner_name);
-            stmt.setString(5, commit_time);
-            stmt.setString(6, review_time);
-            stmt.setString(7, public_time);
-            stmt.setString(8, duration);
+            stmt.setTimestamp(5, Timestamp.valueOf(commit_time));
+            stmt.setTimestamp(6, Timestamp.valueOf(review_time));
+            stmt.setTimestamp(7, Timestamp.valueOf(public_time));
+            stmt.setInt(8, Integer.valueOf(duration));
             stmt.setString(9, description);
             stmt.setString(10, reviewer_mid);
             stmt.addBatch();
@@ -161,5 +172,12 @@ public class InsertThreadVideo implements Runnable {
         view = view.replace("]", "");
         view = view.replace("\"", "");
         return view;
+    }
+    private synchronized void mycommit(){
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

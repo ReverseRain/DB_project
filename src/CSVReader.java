@@ -36,11 +36,12 @@ public class CSVReader {
     }
     public String[] readLine() throws IOException {
         String[] ans=new String[length];
-        char line;long cnt=0;int t=0;int tem;
+        int line;long cnt=0;int t=0;int tem;
         StringBuilder sb=new StringBuilder();
         while ((tem =  reader.read())!=-1){
-            line=(char) tem;
+            line= tem;
             if (line=='\"'){
+                sb.append((char)line);
                 cnt++;
             } else if (line==','&&cnt%2==0) {
                 ans[t]=sb.toString();
@@ -51,7 +52,7 @@ public class CSVReader {
                 sb=new StringBuilder();
                 break;
             }else {
-                sb.append(line);
+                sb.append((char) line);
             }
         }
         if (ans[length-1]!=null){

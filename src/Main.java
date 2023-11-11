@@ -34,25 +34,31 @@ public class Main {
 ////        System.out.println(suo.length%2);//可不可以用这个判断呢？  ！！可
 //        String[] why="\"\"\"".split("\"");
 //        System.out.println(why.length);
-        CSVReader reader=new CSVReader("C:\\Users\\DELL\\Desktop\\hah.csv");
-        String[] line= null;
-        BufferedReader reader2=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\hah.csv"));
-        System.out.println(reader.length);
-        while ((line= reader.readLine())!=null){
-            System.out.println("true");
-        }
-//        String line2=null;
-//        while ((line2=reader2.readLine())!=null){
-//
-//            System.out.println(line2);
+//        CSVReader reader=new CSVReader("C:\\Users\\DELL\\Desktop\\hah.csv");
+//        String[] line= null;
+//        BufferedReader reader2=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\hah.csv"));
+//        System.out.println(reader.length);
+//        while ((line= reader.readLine())!=null){
+//            System.out.println("true");
 //        }
-//        String[] ko="".split(",")
-        BufferedReader reader3=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\huhu.txt"));
-        String[] haha=reader3.readLine().split(",");
-        for (int i = 0; i < haha.length; i++) {
-            System.out.println(haha[i]+" "+haha[++i]);
-        }
-        System.out.println(haha.length);
+////        String line2=null;
+////        while ((line2=reader2.readLine())!=null){
+////
+////            System.out.println(line2);
+////        }
+////        String[] ko="".split(",")
+//        BufferedReader reader3=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\huhu.txt"));
+//        String[] haha=reader3.readLine().split(",");
+//        for (int i = 0; i < haha.length; i++) {
+//            System.out.println(haha[i]+" "+haha[++i]);
+//        }
+//        System.out.println(haha.length);
+//    }
+//    //  String[]strings=s1.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",-1);不分隔内容中的，
+    BufferedReader reader=new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\文档.csv"));
+    String line;
+    while ((line=reader.readLine())!=null){
+        System.out.println(line);
     }
-    //  String[]strings=s1.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",-1);不分隔内容中的，
+    }
 }
