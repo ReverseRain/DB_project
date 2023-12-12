@@ -85,3 +85,22 @@ create table if not exists favorite(
 --         on UPDATE cascade,
 --         constraint uq3 unique (BV,user_mid)
 );
+create table if not exists UserRecord(
+   Mid bigint,
+   Name varchar(100),
+   Sex varchar(10),
+   Birthday varchar(20),
+   Level smallint,
+   coin int,
+   Sign varchar(1000),
+   identity varchar(10),
+   password varchar(100),
+   qq varchar(100),
+   wechat varchar(100)
+);
+
+create table if not exists Followings(
+    id serial,
+    user_mid bigint,
+    following_mid bigint
+);
