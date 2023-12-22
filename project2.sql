@@ -104,3 +104,84 @@ create table if not exists Followings(
     user_mid bigint,
     following_mid bigint
 );
+
+
+
+
+create table if not exists UserRecord(
+   Mid bigint primary key ,
+   Name varchar(100),
+   Sex varchar(10),
+   Birthday varchar(20),
+   Level smallint,
+   coin int,
+   Sign varchar(1000),
+   identity varchar(10),
+   password varchar(100),
+   qq varchar(100),
+   wechat varchar(100)
+);
+
+create table if not exists Followings(
+    id serial primary key ,
+    user_mid bigint references userrecord(mid) on delete cascade ,
+    following_mid bigint references userrecord(mid) on delete cascade
+
+);
+
+create table if not exists videos(
+    bv varchar(100) primary key,
+    title varchar(100),
+    ownerMid  bigint references userrecord(mid),
+    ownerName varchar(100),
+    commitTime timestamp(0),
+    reviewTime timestamp(0),
+    publicTime timestamp(0),
+    duration double precision,
+    description varchar(10000),
+    reviewer bigint references userrecord(mid)
+
+);
+create table if not exists view(
+    id serial primary key ,
+    bv varchar(100) not null references videos(bv) on delete cascade,
+    mid bigint references userrecord(mid) on delete cascade,
+    watchTime double precision
+
+
+);
+
+
+create table if not exists danmu(
+    id serial primary key ,
+    bv varchar(100) not null references videos(bv) on delete cascade,
+    mid bigint references userrecord(mid) on delete cascade,
+    time float,
+    content varchar(500),
+    postTime timestamp(0)
+);
+create table if not exists danmuLikeBy(
+    id serial primary key ,
+    danmuID integer ,
+    likeMid bigint references userrecord(mid) on delete cascade
+
+);
+
+create table if not exists like_(
+    id serial primary key ,
+    BV varchar(100) not null references videos(bv) on delete cascade,
+    mid bigint references userrecord(mid) on delete cascade
+);
+create table if not exists coin(
+    id serial primary key ,
+    BV varchar(100) not null references videos(bv) on delete cascade,
+    mid bigint references userrecord(mid) on delete cascade
+
+);
+create table if not exists favorite(
+    id serial primary key ,
+    BV varchar(100) not null references videos(bv) on delete cascade,
+    mid bigint references userrecord(mid) on delete cascade
+
+);
+
